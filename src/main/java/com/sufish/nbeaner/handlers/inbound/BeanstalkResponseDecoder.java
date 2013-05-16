@@ -51,7 +51,7 @@ public class BeanstalkResponseDecoder extends ReplayingDecoder<BeanstalkResponse
         }
     }
 
-    private BeanstalkResponse buildResponse(String firstFrame) {
+    private BeanstalkResponse buildResponse(String firstFrame) throws BeanstalkUnexpectedResponseException {
         String[] headers = firstFrame.split(" ");
         if (headers.length == 0) {
             throw new BeanstalkUnexpectedResponseException("responses has no header:" + firstFrame);

@@ -1,10 +1,10 @@
 package com.sufish.nbeaner;
 
+import com.sufish.nbeaner.handlers.callback.FailedResponseException;
 import com.sufish.nbeaner.handlers.callback.PutRequestCallback;
 import com.sufish.nbeaner.pool.BeanstalkClient;
 import com.sufish.nbeaner.pool.BeanstalkConnection;
 import com.sufish.nbeaner.protocol.Beanstalk;
-import com.sufish.nbeaner.protocol.OperationFailureException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,13 +79,13 @@ public class BeanstalkClientTest {
 
     @Test
     public void testReserve() throws Exception {
-        int jobId = connection.put(new Job("fuck".getBytes(), 65535, 0, 120));
+        int jobId = connection.put(new Job("test".getBytes(), 65535, 0, 120));
         markNewJob(jobId);
         TubeStatus tubeStatus = connection.statsTube("default");
         assertThat(tubeStatus.currentReadyJobs()).isEqualTo(1);
         Job job = connection.reserve();
         assertThat(job.getId()).isEqualTo(jobId);
-        assertThat(job.getJobData()).isEqualTo("fuck".getBytes());
+        assertThat(job.getJobData()).isEqualTo("test".getBytes());
         tubeStatus = connection.statsTube("default");
         assertThat(tubeStatus.currentReadyJobs()).isEqualTo(0);
         assertThat(tubeStatus.currentReservedJobs()).isEqualTo(1);
@@ -97,13 +97,13 @@ public class BeanstalkClientTest {
 
     @Test
     public void testRelease() throws Exception {
-        int jobId = connection.put(new Job("fuck".getBytes(), 65535, 0, 120));
+        int jobId = connection.put(new Job("test".getBytes(), 65535, 0, 120));
         markNewJob(jobId);
         TubeStatus tubeStatus = connection.statsTube("default");
         assertThat(tubeStatus.currentReadyJobs()).isEqualTo(1);
         Job job = connection.reserve();
         assertThat(job.getId()).isEqualTo(jobId);
-        assertThat(job.getJobData()).isEqualTo("fuck".getBytes());
+        assertThat(job.getJobData()).isEqualTo("test".getBytes());
         tubeStatus = connection.statsTube("default");
         assertThat(tubeStatus.currentReadyJobs()).isEqualTo(0);
         assertThat(tubeStatus.currentReservedJobs()).isEqualTo(1);
@@ -124,7 +124,7 @@ public class BeanstalkClientTest {
         try {
             BeanstalkConnection connection = client.getConnection();
             connection.delete(10000);
-        } catch (OperationFailureException e) {
+        } catch (FailedResponseException e) {
             if (!e.getResponseText().equals(Beanstalk.NOT_FOUND)) {
                 fail("should get " + Beanstalk.NOT_FOUND);
             }
