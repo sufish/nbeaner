@@ -8,7 +8,7 @@ needs, so i rolled our own beanstalkd client thanks to the simple protocol of be
 it provides
 
 1.  connection pooling
-2.  sync interface and aysnc interce
+2.  sync interface and aysnc interface
 
 it based on 
 
