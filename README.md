@@ -49,6 +49,18 @@ Async call
             }
   });
 ```
+###Exception handling###
+one reason that i decided to roll my own client is exception handling, we need rubust error handling for client to recovery
+from server crashes. so basically there are 2 sorts of exception will be thrown/retrieved in the interfaces. FailedResponseException and BeanstalkConnectionException.
+FailedResponseException will be  raised when beanstalkd server return response with failed status, client can still send command via the same channel.
+BeanstalkConnectionException will be raised when there are I/O, protocol handling exceptions, in such case the underlying socket will be closed and client will not 
+be able send commands via the same channel and has to fetch a new connection from the connection pool.
+
+###Async callbacks###
+Callbacks in Async interfaces will be executed in threads other than the I/O threads, so blocking operation like database calls will not 
+impact I/O proformance. but by implemention these threads are from Netty4 event-loops so the callbacks invoked on same channcel will be executed on same threads
+sequentially and hence blocking operations in callback may impact the execution of other callbacks even the callbacks will be invoked on a different channel(different channels may share the same thread).
+so be careful and if possible you can move the blocking operation to your own thread-pool executors. 
 
 
 
