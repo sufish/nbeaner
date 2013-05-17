@@ -9,4 +9,5 @@ public class Beanstalk {
     public static final String USING = "USING";
     public static final String OK = "OK";
     public static final String NOT_FOUND = "NOT_FOUND";
+    public static final String TIMED_OUT = "TIMED_OUT";
 }
